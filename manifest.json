@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "Timer",
+  "version": "1.0",
+  "description": "Displays a simple timer on the top right of every page that persists across tabs and reloads.",
+  "permissions": ["storage"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "css": ["styles.css"]
+    }
+  ],
+  "action": {
+    "default_title": "Timer"
+  }
+}
