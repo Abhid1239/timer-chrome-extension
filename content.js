@@ -1,31 +1,38 @@
-(() => {
-    const timerContainer = document.createElement("div");
-    timerContainer.id = 'timer-container';
+(function() {
+  // Create the timer container
+  const timerContainer = document.createElement('div');
+  timerContainer.id = 'persistent-timer-container';
 
-    const timerDisplay = document.createElement("span");
-    timerDisplay.id = 'timer-display';
-    timerDisplay.textContent = "00:00:00";
+  // Create the display
+  const timeDisplay = document.createElement('span');
+  timeDisplay.id = 'persistent-timer-display';
+  timeDisplay.textContent = '00:00:00';
 
-    const startButton = document.createElement("button");
-    startButton.id = 'timer-start-btn';
-    startButton.textContent = "Start";
+  // Create buttons
+  const startButton = document.createElement('button');
+  startButton.textContent = 'Start';
+  startButton.id = 'timer-start-btn';
 
-        const stopButton = document.createElement("button");
-    stopButton.id = 'timer-stop-btn';
-    stopButton.textContent = "Stop";
+  const stopButton = document.createElement('button');
+  stopButton.textContent = 'Stop';
+  stopButton.id = 'timer-stop-btn';
 
-        const resetButton = document.createElement("button");
-    resetButton.id = 'timer-reset-btn';
-    resetButton.textContent = "Reset";
+  const resetButton = document.createElement('button');
+  resetButton.textContent = 'Reset';
+  resetButton.id = 'timer-reset-btn';
 
-    timerContainer.appendChild(timerDisplay);
-    timerContainer.appendChild(startButton);
-    timerContainer.appendChild(stopButton);
-    timerContainer.appendChild(resetButton);
+  // Add elements to the container
+  timerContainer.appendChild(timeDisplay);
+  timerContainer.appendChild(startButton);
+  timerContainer.appendChild(stopButton);
+  timerContainer.appendChild(resetButton);
 
-    document.body.appendChild(timerContainer);
+  // Add the container to the page
+  document.body.appendChild(timerContainer);
 
-      function formatTime(ms) {
+  // --- Functionality ---
+
+  function formatTime(ms) {
     let totalSeconds = Math.floor(ms / 1000);
     let hours = Math.floor(totalSeconds / 3600).toString().padStart(2, '0');
     let minutes = Math.floor((totalSeconds % 3600) / 60).toString().padStart(2, '0');
@@ -33,7 +40,8 @@
     return `${hours}:${minutes}:${seconds}`;
   }
 
-   startButton.addEventListener('click', () => {
+  // Add event listeners to buttons
+  startButton.addEventListener('click', () => {
     chrome.runtime.sendMessage({
       command: 'start'
     });
@@ -50,7 +58,6 @@
       command: 'reset'
     });
   });
-
 
   // Listen for time updates from the background script
   chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -74,5 +81,4 @@
     }
   });
 
-
-})()
+})();
