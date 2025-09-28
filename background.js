@@ -1,6 +1,7 @@
-let timerInterval, startTime=0, elapsedTime =0, isRunning =false;
-
-
+let timerInterval;
+let startTime = 0;
+let elapsedTime = 0;
+let isRunning = false;
 
 // Function to update all content scripts with the current time
 function broadcastTime() {
@@ -10,10 +11,11 @@ function broadcastTime() {
       isRunning
     };
     for (let tab of tabs) {
+      // Use catch() to prevent errors if a tab can't be reached
       chrome.tabs.sendMessage(tab.id, {
         command: "update",
         data: timeData
-      }).catch(err => console.log("Could not contact tab, it might be closed or restricted."));
+      }).catch(err => console.log("Could not contact tab."));
     }
   });
 }
@@ -66,11 +68,12 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       elapsedTime,
       isRunning
     });
+    // **THE FIX**: Only return true for the message that sends a response
+    return true;
   }
-  return true; // Indicates we will send a response asynchronously
 });
 
-// Load saved state when the extension starts up
+// Load saved state when the browser starts
 chrome.runtime.onStartup.addListener(() => {
   chrome.storage.local.get(["elapsedTime", "isRunning", "startTime"], (result) => {
     elapsedTime = result.elapsedTime || 0;

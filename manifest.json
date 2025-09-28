@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Timer",
+  "name": "Persistent Page Timer",
   "version": "1.0",
   "description": "Displays a simple timer on the top right of every page that persists across tabs and reloads.",
   "permissions": ["storage"],
@@ -15,6 +15,6 @@
     }
   ],
   "action": {
-    "default_title": "Timer"
+    "default_title": "Persistent Page Timer"
   }
 }
