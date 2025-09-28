@@ -8,14 +8,31 @@
   align-items: center;
   height: 32px;
   padding: 4px;
-  color: #6b7280;
   font-family: sans-serif;
-  flex-shrink: 0;
   background-color: #2c2b2b;
-  /* border: 1px solid #e5e7eb; */
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   color: #a8a8a8;
+  transition: width 0.3s ease-in-out;
+  overflow: hidden;
+}
+
+/* Styling for elements that will be animated */
+.play-timer-group,
+.control-button#reset-btn {
+  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out,
+    width 0.3s ease-in-out;
+  white-space: nowrap;
+}
+
+/* Collapsed state for the container */
+#persistent-timer-container.collapsed .play-timer-group,
+#persistent-timer-container.collapsed .control-button#reset-btn {
+  opacity: 0;
+  transform: scale(0.8);
+  width: 0;
+  pointer-events: none;
+  padding: 0;
 }
 
 /* Styling for the group containing play button and timer */
@@ -34,11 +51,12 @@
   justify-content: center;
   height: 100%;
   cursor: pointer;
-  padding: 4px;
+  padding: 2px;
   border-radius: 4px;
   background-color: transparent;
   border: none;
   transition: background-color 0.2s ease;
+  flex-shrink: 0;
 }
 
 /* Hover effect for buttons */
@@ -67,7 +85,7 @@
 /* Styling for the time display text */
 .time-display {
   font-size: 14px;
-  color: #60a5fa;
+  color: #1a90ff;
   user-select: none;
   padding: 0 4px;
 }
@@ -75,4 +93,8 @@
 /* Utility class to hide an element */
 .hidden {
   display: none;
+}
+
+.icon-reverse {
+  transform: rotate(180deg);
 }
