@@ -54,7 +54,6 @@
   container.appendChild(collapseButton);
   container.appendChild(playTimerGroup);
   container.appendChild(resetButton);
-  document.body.appendChild(container);
 
   // --- Core Functions ---
   function formatTime(ms) {
@@ -67,13 +66,17 @@
   }
 
   function tick() {
+    if (!chrome.runtime?.id) {
+      clearInterval(timerInterval);
+      return;
+    }
     const currentTotal = elapsedTime + (Date.now() - startTime);
     timeDisplay.textContent = formatTime(currentTotal);
   }
 
   function startLocalTimer() {
     if (timerInterval) clearInterval(timerInterval);
-    tick(); // Update immediately
+    tick();
     timerInterval = setInterval(tick, 1000);
   }
 
@@ -93,30 +96,42 @@
     }
   }
 
+  function applySettings(settings) {
+    container.style.display = settings.isTimerVisible ? 'flex' : 'none';
+    container.className = ' ';
+    container.classList.add(`position-${settings.timerPosition}`);
+
+    // SYNC FIX: Apply collapsed state from storage
+    isCollapsed = settings.isTimerCollapsed;
+    container.classList.toggle('collapsed', isCollapsed);
+    const iconWrapper = collapseButton.querySelector('.icon-wrapper');
+    iconWrapper.innerHTML = isCollapsed ? svgs.timer : svgs.back;
+  }
+
   // --- Event Listeners ---
   playPauseButton.addEventListener('click', () => {
-    isRunning = !isRunning; // Toggle state first
-    if (isRunning) { // STARTING
+    if (!chrome.runtime?.id) return;
+    isRunning = !isRunning;
+    if (isRunning) {
       startTime = Date.now();
       chrome.runtime.sendMessage({ command: 'start', data: { startTime, elapsedTime } });
       startLocalTimer();
-    } else { // STOPPING
+    } else {
       stopLocalTimer();
-      // **THE FIX PART 2**: Calculate final elapsed time here, not in the stop function.
       elapsedTime += (Date.now() - startTime);
       chrome.runtime.sendMessage({ command: 'stop', data: { elapsedTime } });
     }
     updateUI();
   });
 
-  // **THE FIX PART 3**: The reset logic is now cleaner and in the correct order.
   resetButton.addEventListener('click', () => {
-    stopLocalTimer(); // 1. Stop any active timer.
-    isRunning = false;    // 2. Reset all state variables.
+    if (!chrome.runtime?.id) return;
+    stopLocalTimer();
+    isRunning = false;
     elapsedTime = 0;
     startTime = 0;
-    chrome.runtime.sendMessage({ command: 'reset' }); // 3. Sync with background.
-    updateUI(); // 4. Update the display to show 00:00:00.
+    chrome.runtime.sendMessage({ command: 'reset' });
+    updateUI();
   });
 
   collapseButton.addEventListener('click', () => {
@@ -124,21 +139,58 @@
     container.classList.toggle('collapsed', isCollapsed);
     const iconWrapper = collapseButton.querySelector('.icon-wrapper');
     iconWrapper.innerHTML = isCollapsed ? svgs.timer : svgs.back;
+    // SYNC FIX: Save the new collapsed state to storage
+    chrome.storage.local.set({ isTimerCollapsed: isCollapsed });
   });
 
-  // --- Initial Sync ---
-  chrome.runtime.sendMessage({ command: "getStatus" }, (response) => {
-    if (chrome.runtime.lastError) {
-      console.log(chrome.runtime.lastError.message);
-    } else if (response) {
-      isRunning = response.isRunning || false;
-      elapsedTime = response.elapsedTime || 0;
-      startTime = response.startTime || Date.now();
-      updateUI();
-      // If the timer was running when the page loaded, start the local ticker
+  // --- Initial Sync and Listeners ---
+  const initialSettings = {
+    isTimerVisible: true,
+    timerPosition: 'top-right',
+    isTimerCollapsed: false
+  };
+
+  chrome.storage.local.get(initialSettings, (settings) => {
+    document.body.appendChild(container);
+    applySettings(settings);
+
+    if (chrome.runtime?.id) {
+      chrome.runtime.sendMessage({ command: "getStatus" }, (response) => {
+        if (chrome.runtime.lastError) {
+          console.log(chrome.runtime.lastError.message);
+        } else if (response) {
+          isRunning = response.isRunning || false;
+          elapsedTime = response.elapsedTime || 0;
+          startTime = response.startTime || Date.now();
+          updateUI();
+          if (isRunning) {
+            startLocalTimer();
+          }
+        }
+      });
+    }
+  });
+
+  // SYNC FIX: Listen for storage changes to sync collapsed state
+  chrome.storage.onChanged.addListener((changes, namespace) => {
+    if (namespace === 'local') {
+      chrome.storage.local.get(initialSettings, applySettings);
+    }
+  });
+
+  // SYNC FIX: Listen for broadcasted state changes for the clock
+  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.command === 'stateChanged') {
+      isRunning = request.data.isRunning;
+      elapsedTime = request.data.elapsedTime ?? elapsedTime;
+      startTime = request.data.startTime ?? startTime;
+
       if (isRunning) {
         startLocalTimer();
+      } else {
+        stopLocalTimer();
       }
+      updateUI();
     }
   });
 })();

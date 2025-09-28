@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Persistent Page Timer",
-  "version": "1.0",
-  "description": "Displays a simple timer on the top right of every page that persists across tabs and reloads.",
+  "name": "Timer",
+  "version": "1.2",
+  "description": "Displays a configurable timer on every page that persists across tabs and reloads.",
   "permissions": ["storage"],
   "background": {
     "service_worker": "background.js"
@@ -15,6 +15,7 @@
     }
   ],
   "action": {
-    "default_title": "Persistent Page Timer"
+    "default_popup": "popup.html",
+    "default_title": "Timer"
   }
 }

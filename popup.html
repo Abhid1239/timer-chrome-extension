@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <meta charset="UTF-8">
+        <title>Timer Settings</title>
+        <link rel="stylesheet" href="popup.css">
+    </head>
+
+    <body>
+        <div class="container">
+            <header>
+                <h1>Timer Settings</h1>
+            </header>
+
+            <section class="setting-row">
+                <label for="visibility-toggle">Show Timer on Page</label>
+                <label class="switch">
+                    <input type="checkbox" id="visibility-toggle">
+                    <span class="slider"></span>
+                </label>
+            </section>
+
+            <section class="setting-group">
+                <h2>Position</h2>
+                <div class="position-options">
+                    <div class="radio-option">
+                        <input type="radio" id="pos-top-left" name="position" value="top-left">
+                        <label for="pos-top-left">Top Left</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="pos-top-right" name="position" value="top-right">
+                        <label for="pos-top-right">Top Right</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="pos-bottom-left" name="position" value="bottom-left">
+                        <label for="pos-bottom-left">Bottom Left</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="pos-bottom-right" name="position" value="bottom-right">
+                        <label for="pos-bottom-right">Bottom Right</label>
+                    </div>
+                </div>
+            </section>
+
+            <footer>
+                <a href="https://www.example.com" target="_blank">More Info & Updates</a>
+            </footer>
+        </div>
+        <script src="popup.js"></script>
+    </body>
+
+</html>
