@@ -1,6 +1,8 @@
 # Timer - A Minimalist, Persistent Chrome Extension
 
-![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-Available-green?style=for-the-badge&logo=googlechrome&logoColor=white)
+<!-- ![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-Available-green?style=for-the-badge&logo=googlechrome&logoColor=white) -->
+
+![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-In_Review-yellow?style=for-the-badge&logo=googlechrome&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
 ![Version](https://img.shields.io/badge/Version-2.0-blue?style=for-the-badge)
 
@@ -70,4 +72,22 @@ Contributions, issues, and feature requests are welcome! Feel free to check the 
 
 ## 📄 License
 
-This project is licensed under the MIT License.
+This project is licensed under the **MIT License with Commercial Use Restriction**.
+
+### **Free Use (Personal/Educational)**
+- ✅ Personal use
+- ✅ Educational purposes
+- ✅ Non-commercial projects
+- ✅ Open source contributions
+
+### **Commercial Use**
+- ❌ Commercial applications
+- ❌ Paid products/services
+- ❌ Business use
+- ❌ Revenue-generating activities
+
+**For commercial licensing inquiries, please contact: [your-email-here]**
+
+---
+
+**Note:** This dual-licensing approach allows free personal use while protecting commercial interests. If you're unsure whether your use case requires a commercial license, please reach out for clarification.
