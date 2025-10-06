@@ -8,7 +8,7 @@
 
 A no-nonsense, on-page timer designed for coding interviews, focused work, and anyone who needs to keep track of time without the clutter.
 
-[Timer Demo](https://www.loom.com/share/085f9f9ede3a44288e413a81dd3c0a0f?sid=46c7adf5-0699-4d60-9070-641a8b916327)
+[Timer Demo](https://www.youtube.com/watch?v=bpWk9TZDaTo)
 
 ---
 
