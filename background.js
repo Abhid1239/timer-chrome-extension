@@ -3,12 +3,16 @@ function broadcastStateChange(data) {
   chrome.tabs.query({}, (tabs) => {
     for (let tab of tabs) {
       chrome.tabs.sendMessage(tab.id, { command: "stateChanged", data })
-        .catch(err => console.log("Could not contact tab to sync state."));
+        .then(() => {
+          // console.log('[TimerExt/bg] broadcasted state change to tab', tab.id, data);
+        })
+        .catch(err => { /* console.log('[TimerExt/bg] Could not contact tab', tab.id, err?.message); */ });
     }
   });
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  // console.log('[TimerExt/bg] onMessage', request.command, request.data);
   switch (request.command) {
     case "start":
       chrome.storage.local.set({
@@ -32,6 +36,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       break;
     case "getStatus":
       chrome.storage.local.get(["startTime", "elapsedTime", "isRunning"], (result) => {
+        // console.log('[TimerExt/bg] getStatus ->', result);
         sendResponse(result);
       });
       return true; // Return true because this is asynchronous

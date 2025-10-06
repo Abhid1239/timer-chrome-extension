@@ -10,12 +10,30 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content.js"],
-      "css": ["styles.css"]
+      "js": [
+        "assets.js",
+        "content-ui.js",
+        "content-settings.js",
+        "content-state.js",
+        "content-drag.js",
+        "content.js"
+      ]
     }
   ],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "Timer"
+    "default_title": "Timer",
+    "default_icon": {
+      "16": "t2.png",
+      "32": "t2.png",
+      "48": "t2.png",
+      "128": "t2.png"
+    }
+  },
+  "icons": {
+    "16": "t2.png",
+    "32": "t2.png",
+    "48": "t2.png",
+    "128": "t2.png"
   }
 }

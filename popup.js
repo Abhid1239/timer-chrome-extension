@@ -7,10 +7,12 @@ document.addEventListener('DOMContentLoaded', () => {
         // Use default values if nothing is stored yet
         chrome.storage.local.get({
             isTimerVisible: true,
-            timerPosition: 'top-right'
+            timerPosition: 'top-right',
+            timerPositionMode: 'preset'
         }, (items) => {
             visibilityToggle.checked = items.isTimerVisible;
             document.querySelector(`input[value="${items.timerPosition}"]`).checked = true;
+            // If currently in custom mode, reflect by not changing radios; radios still set preset
         });
     }
 
@@ -21,7 +23,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
         chrome.storage.local.set({
             isTimerVisible: isVisible,
-            timerPosition: position
+            timerPosition: position,
+            // Selecting a preset switches out of custom mode
+            timerPositionMode: 'preset'
         });
     }
 
