@@ -7,7 +7,13 @@
         timerPosition: 'top-right',
         timerPositionMode: 'preset',
         timerCustomPosition: { left: 8, top: 8 },
-        isTimerCollapsed: false
+        isTimerCollapsed: false,
+        // Timer/Stopwatch mode settings
+        mode: 'stopwatch', // 'stopwatch' or 'timer'
+        timerHours: 0,
+        timerMinutes: 0,
+        timerSeconds: 0,
+        currentTimerTarget: 0 // total ms for countdown
     };
 
     function loadSettings(callback) {

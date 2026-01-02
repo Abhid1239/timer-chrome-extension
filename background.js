@@ -19,23 +19,39 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         startTime: request.data.startTime,
         elapsedTime: request.data.elapsedTime,
         isRunning: true
-      }, () => broadcastStateChange({ isRunning: true, startTime: request.data.startTime, elapsedTime: request.data.elapsedTime }));
+      }, () => broadcastStateChange({
+        isRunning: true,
+        startTime: request.data.startTime,
+        elapsedTime: request.data.elapsedTime,
+        mode: request.data.mode,
+        currentTimerTarget: request.data.currentTimerTarget
+      }));
       break;
     case "stop":
       chrome.storage.local.set({
         elapsedTime: request.data.elapsedTime,
         isRunning: false
-      }, () => broadcastStateChange({ isRunning: false, elapsedTime: request.data.elapsedTime }));
+      }, () => broadcastStateChange({
+        isRunning: false,
+        elapsedTime: request.data.elapsedTime,
+        mode: request.data.mode,
+        currentTimerTarget: request.data.currentTimerTarget
+      }));
       break;
     case "reset":
       chrome.storage.local.set({
         elapsedTime: 0,
         isRunning: false,
         startTime: 0
-      }, () => broadcastStateChange({ isRunning: false, elapsedTime: 0 }));
+      }, () => broadcastStateChange({
+        isRunning: false,
+        elapsedTime: 0,
+        mode: request.data.mode,
+        currentTimerTarget: request.data.currentTimerTarget
+      }));
       break;
     case "getStatus":
-      chrome.storage.local.get(["startTime", "elapsedTime", "isRunning"], (result) => {
+      chrome.storage.local.get(["startTime", "elapsedTime", "isRunning", "mode", "currentTimerTarget"], (result) => {
         // console.log('[TimerExt/bg] getStatus ->', result);
         sendResponse(result);
       });
@@ -49,6 +65,11 @@ chrome.runtime.onInstalled.addListener(() => {
     elapsedTime: 0,
     isRunning: false,
     startTime: 0,
-    isTimerCollapsed: false // Add collapsed state to storage
+    isTimerCollapsed: false,
+    mode: 'stopwatch',
+    currentTimerTarget: 0,
+    timerHours: 0,
+    timerMinutes: 0,
+    timerSeconds: 0
   });
 });

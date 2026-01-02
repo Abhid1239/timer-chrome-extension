@@ -37,19 +37,94 @@ header h1 {
   padding-bottom: 4px;
 }
 
-.position-options {
+.position-options,
+.mode-options {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 10px;
 }
 
+.timer-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.input-group label {
+  font-size: 11px;
+  color: #9ca3af;
+  margin-bottom: 4px;
+}
+
+.input-group input {
+  width: 100%;
+  padding: 6px;
+  border: 1px solid #444;
+  border-radius: 4px;
+  background-color: #1f2937;
+  color: #e0e0e0;
+  text-align: center;
+  font-size: 14px;
+  transition: border-color 0.15s ease, transform 0.1s ease;
+}
+
+.input-group input:focus {
+  outline: none;
+  border-color: #60a5fa;
+}
+
+.btn {
+  background: #1f2937;
+  color: #e0e0e0;
+  border: 1px solid #374151;
+  border-radius: 6px;
+  padding: 8px 16px;
+  cursor: pointer;
+  font-size: 12px;
+  width: 100%;
+  transition: background-color 0.15s ease, transform 0.1s ease, box-shadow 0.15s ease;
+}
+
+.btn:hover {
+  background: #111827;
+}
+
+/* Button click feedback - scale down and glow */
+.btn:active {
+  transform: scale(0.97);
+  background: #0d1117;
+  box-shadow: 0 0 8px rgba(96, 165, 250, 0.4);
+}
+
 .radio-option {
   display: flex;
   align-items: center;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: background-color 0.15s ease, transform 0.1s ease;
+  cursor: pointer;
+}
+
+/* Radio option click feedback */
+.radio-option:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.radio-option:active {
+  transform: scale(0.97);
+  background-color: rgba(96, 165, 250, 0.15);
 }
 
 input[type="radio"] {
   margin-right: 6px;
+  cursor: pointer;
 }
 
 footer {
@@ -63,10 +138,15 @@ footer a {
   color: #60a5fa;
   text-decoration: none;
   font-size: 12px;
+  transition: color 0.15s ease;
 }
 
 footer a:hover {
   text-decoration: underline;
+}
+
+footer a:active {
+  color: #3b82f6;
 }
 
 .hint {
@@ -81,6 +161,7 @@ footer a:hover {
   display: inline-block;
   width: 44px;
   height: 24px;
+  cursor: pointer;
 }
 .switch input {
   opacity: 0;
@@ -95,7 +176,7 @@ footer a:hover {
   right: 0;
   bottom: 0;
   background-color: #555;
-  transition: 0.4s;
+  transition: background-color 0.3s ease, transform 0.1s ease, box-shadow 0.15s ease;
   border-radius: 24px;
 }
 .slider:before {
@@ -106,9 +187,16 @@ footer a:hover {
   left: 3px;
   bottom: 3px;
   background-color: white;
-  transition: 0.4s;
+  transition: transform 0.3s ease;
   border-radius: 50%;
 }
+
+/* Toggle switch click feedback */
+.switch:active .slider {
+  transform: scale(0.95);
+  box-shadow: 0 0 8px rgba(96, 165, 250, 0.4);
+}
+
 input:checked + .slider {
   background-color: #60a5fa;
 }

@@ -22,6 +22,39 @@
             </section>
 
             <section class="setting-group">
+                <h2>Mode</h2>
+                <div class="mode-options">
+                    <div class="radio-option">
+                        <input type="radio" id="mode-stopwatch" name="mode" value="stopwatch">
+                        <label for="mode-stopwatch">Stopwatch</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="mode-timer" name="mode" value="timer">
+                        <label for="mode-timer">Timer</label>
+                    </div>
+                </div>
+            </section>
+
+            <section class="setting-group" id="timer-settings" style="display: none;">
+                <h2>Timer Settings</h2>
+                <div class="timer-inputs">
+                    <div class="input-group">
+                        <label for="timer-hours">Hours</label>
+                        <input type="number" id="timer-hours" min="0" max="23" value="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="timer-minutes">Minutes</label>
+                        <input type="number" id="timer-minutes" min="0" max="59" value="0">
+                    </div>
+                    <div class="input-group">
+                        <label for="timer-seconds">Seconds</label>
+                        <input type="number" id="timer-seconds" min="0" max="59" value="0">
+                    </div>
+                </div>
+                <button id="set-timer-btn" class="btn">Set Timer</button>
+            </section>
+
+            <section class="setting-group">
                 <h2>Position</h2>
                 <div class="position-options">
                     <div class="radio-option">

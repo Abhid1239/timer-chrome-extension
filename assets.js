@@ -11,20 +11,27 @@
     };
 
     const css = `
-#persistent-timer-container { position: fixed; z-index: 2147483647; display: flex; align-items: center; padding: 4px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #282828; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: width 0.3s ease-in-out; overflow: hidden; color: #a8a8a8; height: 32px; cursor: grab;box-sizing: border-box; }
+@keyframes buzz {
+    0%, 100% { transform: translateX(0); }
+    10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
+    20%, 40%, 60%, 80% { transform: translateX(2px); }
+}
+#persistent-timer-container { position: fixed; z-index: 2147483647; display: flex; align-items: center; padding: 4px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #282828; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: width 0.3s ease-in-out, transform 0.1s ease; overflow: hidden; color: #a8a8a8; height: 32px; cursor: grab; box-sizing: border-box; }
 #persistent-timer-container.dragging { transition: none; }
+#persistent-timer-container.buzzing { animation: buzz 0.4s ease-in-out infinite; box-shadow: 0 4px 16px rgba(255, 59, 48, 0.5); }
 .play-timer-group, .control-button#reset-btn { transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out, width 0.3s ease-in-out; white-space: nowrap; }
 #persistent-timer-container.collapsed .play-timer-group, #persistent-timer-container.collapsed .control-button#reset-btn { opacity: 0; transform: scale(0.8); width: 0; pointer-events: none; padding: 0; }
 .play-timer-group { display: flex; align-items: center; gap: 2px; height: 100%; padding: 2px; }
-.control-button { display: flex; align-items: center; justify-content: center; height: 100%; cursor: pointer; padding: 2px; border-radius: 4px; background-color: transparent; border: none; transition: background-color 0.2s ease; flex-shrink: 0; }
+.control-button { display: flex; align-items: center; justify-content: center; height: 100%; cursor: pointer; padding: 2px; border-radius: 4px; background-color: transparent; border: none; transition: background-color 0.15s ease, transform 0.1s ease; flex-shrink: 0; }
 .control-button:hover { background-color: rgb(79 79 79); }
+.control-button:active { transform: scale(0.85); background-color: rgba(96, 165, 250, 0.3); }
 .control-button:focus-visible { outline: 2px solid #60a5fa; outline-offset: 2px; border-radius: 6px; }
 .icon-wrapper { position: relative; width: 14px; height: 14px; padding: 1px; }
 .icon { position: absolute; top: 50%; left: 50%; height: 13px; transform: translate(-50%, -50%); color: #cacaca; }
-.time-display { font-size: 14px; color: #1a90ff; user-select: none; min-width: 62px; text-align: center; }
+.time-display { font-size: 14px; color: #1a90ff; user-select: none; min-width: 62px; text-align: center; transition: color 0.5s ease; }
 .hidden { display: none; }
 .icon-reverse { transform: translate(-50%, -50%) rotate(180deg); }
-@media (prefers-reduced-motion: reduce) { #persistent-timer-container, .play-timer-group, .control-button#reset-btn { transition: none; } }
+@media (prefers-reduced-motion: reduce) { #persistent-timer-container, .play-timer-group, .control-button#reset-btn, #persistent-timer-container.buzzing { transition: none; animation: none; } }
 `;
 
     ns.assets = { svgs, css };
