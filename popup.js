@@ -21,8 +21,13 @@ document.addEventListener('DOMContentLoaded', () => {
             timerSeconds: 0
         }, (items) => {
             visibilityToggle.checked = items.isTimerVisible;
-            document.querySelector(`input[value="${items.timerPosition}"]`).checked = true;
-            document.querySelector(`input[value="${items.mode}"]`).checked = true;
+
+            // Safely set radio buttons with null checks
+            const positionInput = document.querySelector(`input[value="${items.timerPosition}"]`);
+            if (positionInput) positionInput.checked = true;
+
+            const modeInput = document.querySelector(`input[value="${items.mode}"]`);
+            if (modeInput) modeInput.checked = true;
 
             // Show/hide timer settings based on mode
             timerSettings.style.display = items.mode === 'timer' ? 'block' : 'none';
@@ -45,9 +50,9 @@ document.addEventListener('DOMContentLoaded', () => {
             timerPosition: position,
             timerPositionMode: 'preset',
             mode: mode,
-            timerHours: parseInt(timerHours.value) || 0,
-            timerMinutes: parseInt(timerMinutes.value) || 0,
-            timerSeconds: parseInt(timerSeconds.value) || 0
+            timerHours: Math.max(0, parseInt(timerHours.value, 10) || 0),
+            timerMinutes: Math.max(0, Math.min(59, parseInt(timerMinutes.value, 10) || 0)),
+            timerSeconds: Math.max(0, Math.min(59, parseInt(timerSeconds.value, 10) || 0))
         });
     }
 
@@ -60,9 +65,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Handle set timer button
     function handleSetTimer() {
-        const hours = parseInt(timerHours.value) || 0;
-        const minutes = parseInt(timerMinutes.value) || 0;
-        const seconds = parseInt(timerSeconds.value) || 0;
+        // Parse with radix 10 and clamp to valid ranges
+        const hours = Math.max(0, Math.min(23, parseInt(timerHours.value, 10) || 0));
+        const minutes = Math.max(0, Math.min(59, parseInt(timerMinutes.value, 10) || 0));
+        const seconds = Math.max(0, Math.min(59, parseInt(timerSeconds.value, 10) || 0));
+
+        // Update inputs to show clamped values
+        timerHours.value = hours;
+        timerMinutes.value = minutes;
+        timerSeconds.value = seconds;
 
         // Validate max 24 hours
         const totalMs = (hours * 3600 + minutes * 60 + seconds) * 1000;

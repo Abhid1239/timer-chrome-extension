@@ -18,7 +18,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       chrome.storage.local.set({
         startTime: request.data.startTime,
         elapsedTime: request.data.elapsedTime,
-        isRunning: true
+        isRunning: true,
+        mode: request.data.mode,
+        currentTimerTarget: request.data.currentTimerTarget
       }, () => broadcastStateChange({
         isRunning: true,
         startTime: request.data.startTime,
@@ -30,7 +32,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     case "stop":
       chrome.storage.local.set({
         elapsedTime: request.data.elapsedTime,
-        isRunning: false
+        isRunning: false,
+        mode: request.data.mode,
+        currentTimerTarget: request.data.currentTimerTarget
       }, () => broadcastStateChange({
         isRunning: false,
         elapsedTime: request.data.elapsedTime,
@@ -42,7 +46,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       chrome.storage.local.set({
         elapsedTime: 0,
         isRunning: false,
-        startTime: 0
+        startTime: 0,
+        mode: request.data.mode,
+        currentTimerTarget: request.data.currentTimerTarget
       }, () => broadcastStateChange({
         isRunning: false,
         elapsedTime: 0,
@@ -59,17 +65,41 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
-// Initialize state on first install
-chrome.runtime.onInstalled.addListener(() => {
-  chrome.storage.local.set({
+// Initialize state on first install or update
+// IMPORTANT: Only set defaults for keys that don't exist to preserve user data on updates
+chrome.runtime.onInstalled.addListener((details) => {
+  const defaults = {
     elapsedTime: 0,
     isRunning: false,
     startTime: 0,
     isTimerCollapsed: false,
+    isTimerVisible: true,
+    timerPosition: 'top-right',
+    timerPositionMode: 'preset',
+    timerCustomPosition: { left: 8, top: 8 },
     mode: 'stopwatch',
     currentTimerTarget: 0,
     timerHours: 0,
     timerMinutes: 0,
     timerSeconds: 0
-  });
+  };
+
+  if (details.reason === 'install') {
+    // Fresh install: set all defaults
+    chrome.storage.local.set(defaults);
+  } else if (details.reason === 'update') {
+    // Update: only fill in missing keys to preserve existing user data
+    chrome.storage.local.get(Object.keys(defaults), (existing) => {
+      const toSet = {};
+      for (const key of Object.keys(defaults)) {
+        if (existing[key] === undefined) {
+          toSet[key] = defaults[key];
+        }
+      }
+      // Only write if there are new keys to add
+      if (Object.keys(toSet).length > 0) {
+        chrome.storage.local.set(toSet);
+      }
+    });
+  }
 });

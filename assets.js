@@ -12,13 +12,24 @@
 
     const css = `
 @keyframes buzz {
-    0%, 100% { transform: translateX(0); }
-    10%, 30%, 50%, 70%, 90% { transform: translateX(-2px); }
-    20%, 40%, 60%, 80% { transform: translateX(2px); }
+    /* Active phase: 0-25% (0.5s out of 2s) - shake rapidly */
+    0% { transform: translateX(0); }
+    2.5% { transform: translateX(-3px); }
+    5% { transform: translateX(3px); }
+    7.5% { transform: translateX(-3px); }
+    10% { transform: translateX(3px); }
+    12.5% { transform: translateX(-3px); }
+    15% { transform: translateX(3px); }
+    17.5% { transform: translateX(-3px); }
+    20% { transform: translateX(3px); }
+    22.5% { transform: translateX(-3px); }
+    25% { transform: translateX(0); }
+    /* Idle phase: 25-100% (1.5s) - stay still for user to interact */
+    25.1%, 100% { transform: translateX(0); }
 }
 #persistent-timer-container { position: fixed; z-index: 2147483647; display: flex; align-items: center; padding: 4px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #282828; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); transition: width 0.3s ease-in-out, transform 0.1s ease; overflow: hidden; color: #a8a8a8; height: 32px; cursor: grab; box-sizing: border-box; }
 #persistent-timer-container.dragging { transition: none; }
-#persistent-timer-container.buzzing { animation: buzz 0.4s ease-in-out infinite; box-shadow: 0 4px 16px rgba(255, 59, 48, 0.5); }
+#persistent-timer-container.buzzing { animation: buzz 2s ease-in-out infinite; box-shadow: 0 0 20px rgba(255, 59, 48, 0.7), 0 0 40px rgba(255, 59, 48, 0.4); }
 .play-timer-group, .control-button#reset-btn { transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out, width 0.3s ease-in-out; white-space: nowrap; }
 #persistent-timer-container.collapsed .play-timer-group, #persistent-timer-container.collapsed .control-button#reset-btn { opacity: 0; transform: scale(0.8); width: 0; pointer-events: none; padding: 0; }
 .play-timer-group { display: flex; align-items: center; gap: 2px; height: 100%; padding: 2px; }

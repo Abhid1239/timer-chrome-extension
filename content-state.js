@@ -8,7 +8,8 @@
      * Features:
      * - Timer mode with proper restart after completion
      * - Color gradient: Blue → Light Blue → Orange → Red as time runs out
-     * - Buzz animation when timer reaches zero (stops on interaction)
+     * - Buzz animation when timer reaches zero (continues until user interaction)
+     * - Mode switching properly stops and resets the timer
      */
     function initState(ui) {
         let isRunning = false;
@@ -34,16 +35,19 @@
         // ─────────────────────────────────────────────────────────────────────
 
         /**
-         * Start the buzz animation (timer completed alert)
+         * Start the buzz animation (timer completed alert).
+         * Will continue indefinitely until stopBuzzing() is called.
          */
         function startBuzzing() {
             if (isBuzzing) return;
             isBuzzing = true;
+            timerCompleted = true;
             ui.container.classList.add('buzzing');
         }
 
         /**
-         * Stop the buzz animation (on user interaction)
+         * Stop the buzz animation (on user interaction).
+         * Called when user clicks play, reset, collapse, or changes settings.
          */
         function stopBuzzing() {
             if (!isBuzzing) return;
@@ -104,15 +108,17 @@
                 ui.elements.timeDisplay.textContent = ui.formatTime(remaining);
                 updateTimeColor(remaining); // Color based on remaining time
 
-                // Timer completed - stop and start buzzing!
-                if (remaining === 0 && isRunning) {
+                // Timer completed - stop interval and start buzzing!
+                // The buzz will continue until user interacts
+                if (remaining <= 0 && isRunning) {
                     stopLocalTimer();
                     isRunning = false;
-                    timerCompleted = true;  // Mark as completed for restart
                     startTime = 0;
+
+                    // Notify background of stop
                     chrome.runtime.sendMessage({ command: 'stop', data: { elapsedTime: 0, mode, currentTimerTarget } });
 
-                    // Start buzz animation to alert user
+                    // Start buzz animation - will continue indefinitely
                     startBuzzing();
 
                     // Update UI to show play button (ready for restart)
@@ -141,20 +147,45 @@
                 ui.elements.timeDisplay.textContent = ui.formatTime(elapsedTime);
                 updateTimeColor(elapsedTime);
             } else {
-                // Timer mode: show the target time when not running (ready to start)
-                if (!isRunning && !timerCompleted) {
-                    ui.elements.timeDisplay.textContent = ui.formatTime(currentTimerTarget);
-                    updateTimeColor(currentTimerTarget); // Full time = blue
-                } else if (timerCompleted) {
-                    // Timer completed: show 00:00:00 (but play button is ready)
+                // Timer mode
+                if (timerCompleted) {
+                    // Timer completed: show 00:00:00, buzzing, play button ready
                     ui.elements.timeDisplay.textContent = ui.formatTime(0);
                     updateTimeColor(0);
+                } else if (!isRunning) {
+                    // Timer not running: show target time (ready to start)
+                    ui.elements.timeDisplay.textContent = ui.formatTime(currentTimerTarget);
+                    updateTimeColor(currentTimerTarget); // Full time = blue
                 }
+                // If running, tick() handles the display
             }
             ui.setRunningIcons(isRunning);
             ui.container.classList.toggle('collapsed', isCollapsed);
             const iconWrapper = ui.controls.collapseButton.querySelector('.icon-wrapper');
             iconWrapper.innerHTML = isCollapsed ? ui.svgs.timer : ui.svgs.back;
+        }
+
+        // ─────────────────────────────────────────────────────────────────────
+        // FULL RESET FUNCTION
+        // ─────────────────────────────────────────────────────────────────────
+
+        /**
+         * Fully reset the timer state. Called when mode changes or user resets.
+         * @param {boolean} notifyBackground - Whether to send reset message to background
+         */
+        function fullReset(notifyBackground = true) {
+            stopBuzzing();
+            stopLocalTimer();
+            isRunning = false;
+            timerCompleted = false;
+            elapsedTime = 0;
+            startTime = 0;
+
+            if (notifyBackground && chrome.runtime?.id) {
+                chrome.runtime.sendMessage({ command: 'reset', data: { mode, currentTimerTarget } });
+            }
+
+            updateUI();
         }
 
         // ─────────────────────────────────────────────────────────────────────
@@ -202,17 +233,7 @@
 
         function reset() {
             if (!chrome.runtime?.id) return;
-
-            // Stop buzzing on any interaction
-            stopBuzzing();
-
-            stopLocalTimer();
-            isRunning = false;
-            timerCompleted = false;  // Reset completion state
-            elapsedTime = 0;
-            startTime = 0;
-            chrome.runtime.sendMessage({ command: 'reset', data: { mode, currentTimerTarget } });
-            updateUI();
+            fullReset(true);
         }
 
         function setCollapsed(collapsed) {
@@ -248,49 +269,77 @@
         }
 
         // Listen for settings changes (mode, timer target) from popup
+        // KEY BEHAVIOR: Any settings change STOPS and RESETS the timer
         ns.settings.onSettingsChange((settings) => {
             const newMode = settings.mode || 'stopwatch';
             const newTarget = settings.currentTimerTarget || 0;
 
-            // Only update if something changed
-            if (newMode !== mode || newTarget !== currentTimerTarget) {
-                // Stop buzzing when settings change
+            // Check if anything relevant changed
+            const modeChanged = newMode !== mode;
+            const targetChanged = newTarget !== currentTimerTarget;
+
+            if (modeChanged || targetChanged) {
+                // ALWAYS stop buzzing when settings change
                 stopBuzzing();
 
+                // ALWAYS stop the timer when settings change
+                stopLocalTimer();
+                isRunning = false;
+                timerCompleted = false;
+                startTime = 0;
+
+                // Update mode and target
                 mode = newMode;
                 currentTimerTarget = newTarget;
-                timerCompleted = false;  // Reset completion on new settings
 
-                // Reset timer state when settings change (don't auto-start)
-                if (!isRunning) {
+                // Reset elapsed time based on mode
+                if (mode === 'stopwatch') {
+                    // Stopwatch: reset to 0:00:00
                     elapsedTime = 0;
-                    startTime = 0;
-                    updateUI();
+                } else {
+                    // Timer: will show currentTimerTarget in updateUI()
+                    elapsedTime = 0;
                 }
+
+                // Notify background of the reset
+                if (chrome.runtime?.id) {
+                    chrome.runtime.sendMessage({ command: 'reset', data: { mode, currentTimerTarget } });
+                }
+
+                updateUI();
             }
         });
 
         // Listen for background broadcast (cross-tab sync)
         chrome.runtime.onMessage.addListener((request) => {
             if (request.command === 'stateChanged') {
+                const wasRunning = isRunning;
+
                 isRunning = request.data.isRunning;
                 elapsedTime = request.data.elapsedTime ?? elapsedTime;
                 startTime = request.data.startTime ?? startTime;
                 mode = request.data.mode ?? mode;
                 currentTimerTarget = request.data.currentTimerTarget ?? currentTimerTarget;
 
-                // If another tab stopped the timer, stop buzzing here too
-                if (!isRunning) {
-                    stopBuzzing();
-                    timerCompleted = false;
-                }
-
-                if (isRunning) {
-                    startLocalTimer();
-                } else {
+                // If timer stopped (from another tab or after completion)
+                if (wasRunning && !isRunning) {
                     stopLocalTimer();
                     startTime = 0;
+                    // Don't stop buzzing here - let it continue if timer completed
                 }
+
+                // If timer started
+                if (!wasRunning && isRunning) {
+                    stopBuzzing();
+                    timerCompleted = false;
+                    startLocalTimer();
+                }
+
+                // If still running, ensure local timer is running
+                if (isRunning && !timerInterval) {
+                    startLocalTimer();
+                }
+
                 updateUI();
             }
         });
