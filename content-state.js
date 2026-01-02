@@ -2,13 +2,27 @@
     const ns = (window.TimerExt = window.TimerExt || {});
 
     /**
-     * State module: manages runtime state, interval tick updates, UI syncing,
-     * and communication with the background service worker.
-     * 
-     * Features:
-     * - Timer mode with proper restart after completion
-     * - Color gradient: Blue → Light Blue → Orange → Red as time runs out
-     * - Buzz animation when timer reaches zero (stops on interaction)
+     * Initialize and manage timer/stopwatch runtime state, UI syncing, interval ticks, and background communication.
+     *
+     * Manages stopwatch and countdown modes (with automatic restart-after-completion flow for timers), time-based color gradients, buzz animation on timer completion, cross-tab synchronization, and UI control wiring.
+     *
+     * @param {object} ui - UI helper and element references used by the state module.
+     * @param {HTMLElement} ui.container - Root container element (used for class toggles and buzzing).
+     * @param {object} ui.elements - Element references.
+     * @param {HTMLElement} ui.elements.timeDisplay - Element showing the formatted time string.
+     * @param {function(number):string} ui.formatTime - Formats milliseconds to a display string.
+     * @param {function(boolean):void} ui.setRunningIcons - Update play/pause UI state.
+     * @param {object} ui.controls - Control elements.
+     * @param {HTMLElement} ui.controls.playPauseButton - Play/pause button element.
+     * @param {HTMLElement} ui.controls.resetButton - Reset button element.
+     * @param {HTMLElement} ui.controls.collapseButton - Collapse toggle button element.
+     * @param {object} ui.svgs - SVG markup used for collapse button icons (`timer` and `back`).
+     *
+     * @returns {object} An API for controlling state.
+     * @returns {function():void} returns.toggleRun - Toggle between running and paused (handles restart after timer completion).
+     * @returns {function():void} returns.reset - Reset timer/stopwatch state and notify background.
+     * @returns {function(boolean):void} returns.setCollapsed - Set and persist the collapsed UI state.
+     * @returns {function():void} returns.stopBuzzing - Stop the completion buzz animation if active.
      */
     function initState(ui) {
         let isRunning = false;
@@ -34,7 +48,10 @@
         // ─────────────────────────────────────────────────────────────────────
 
         /**
-         * Start the buzz animation (timer completed alert)
+         * Activate the buzz animation when the timer completes.
+         *
+         * Sets the internal buzzing flag and adds the 'buzzing' CSS class to the UI container.
+         * No operation if the animation is already active.
          */
         function startBuzzing() {
             if (isBuzzing) return;
@@ -43,7 +60,7 @@
         }
 
         /**
-         * Stop the buzz animation (on user interaction)
+         * Deactivates the completion buzz animation and removes the 'buzzing' CSS class from the UI container.
          */
         function stopBuzzing() {
             if (!isBuzzing) return;
@@ -56,8 +73,13 @@
         // ─────────────────────────────────────────────────────────────────────
 
         /**
-         * Update time display color based on remaining time percentage.
-         * Only applies in timer mode - stopwatch stays blue.
+         * Set the UI time display color according to remaining time for the active timer.
+         *
+         * In timer mode selects a color from the configured gradient based on the fraction
+         * of remainingMs relative to the current timer target. In stopwatch mode forces
+         * the display color to the stopwatch color.
+         *
+         * @param {number} remainingMs - Remaining time in milliseconds (ignored for stopwatch mode).
          */
         function updateTimeColor(remainingMs) {
             if (mode === 'stopwatch') {
@@ -84,7 +106,13 @@
 
         // ─────────────────────────────────────────────────────────────────────
         // TIMER TICK & INTERVAL
-        // ─────────────────────────────────────────────────────────────────────
+        /**
+         * Advance the timer by one tick: refresh the displayed time and color, and handle timer completion.
+         *
+         * If the Chrome extension runtime is unavailable the interval is cleared and the function exits.
+         * In stopwatch mode the function updates the display with the accumulated elapsed time and applies the stopwatch color.
+         * In timer mode the function updates the display with the remaining time, applies a color based on remaining time, and when remaining reaches zero it stops the local timer, marks the timer completed, resets start time, notifies the background with a stop command (including `elapsedTime: 0`, `mode`, and `currentTimerTarget`), starts the buzz animation, and updates the UI to show the play icon.
+         */
 
         function tick() {
             if (!chrome.runtime?.id) {
@@ -121,12 +149,23 @@
             }
         }
 
+        /**
+         * Start or restart the local timer that invokes `tick` every second.
+         *
+         * Clears any existing interval, runs `tick` immediately, and schedules `tick`
+         * to run once per second thereafter.
+         */
         function startLocalTimer() {
             if (timerInterval) clearInterval(timerInterval);
             tick();
             timerInterval = setInterval(tick, 1000);
         }
 
+        /**
+         * Stop the local interval used for ticking updates and clear its handle.
+         *
+         * Safe to call when no timer is running; ensures the interval reference is cleared.
+         */
         function stopLocalTimer() {
             clearInterval(timerInterval);
             timerInterval = null;
@@ -134,7 +173,11 @@
 
         // ─────────────────────────────────────────────────────────────────────
         // UI UPDATE
-        // ─────────────────────────────────────────────────────────────────────
+        /**
+         * Update all visible UI elements to reflect the current timer/stopwatch state.
+         *
+         * Updates the time display and its color based on mode, running state, and completion status; updates run/pause icons; toggles the container's collapsed class; and sets the collapse button icon.
+         */
 
         function updateUI() {
             if (mode === 'stopwatch') {
@@ -159,7 +202,15 @@
 
         // ─────────────────────────────────────────────────────────────────────
         // PUBLIC ACTIONS
-        // ─────────────────────────────────────────────────────────────────────
+        /**
+         * Toggle the timer's running state and handle restart-after-completion for timer mode.
+         *
+         * Stops any active buzz animation, then either restarts a completed countdown (if in timer mode)
+         * or toggles between start and stop. When starting, records the run start time, notifies the
+         * background service, and starts the local interval. When stopping, stops the local interval,
+         * accumulates elapsed time for stopwatch mode, resets the start time, and notifies the background.
+         * Always updates the UI to reflect the new state.
+         */
 
         function toggleRun() {
             if (!chrome.runtime?.id) return;
@@ -200,6 +251,11 @@
             updateUI();
         }
 
+        /**
+         * Reset the timer state to its initial idle condition and stop any active behaviors.
+         *
+         * Stops buzzing and any local ticking, clears running and completion flags, resets elapsed and start times, notifies the background script of the reset (including current mode and target), and updates the UI.
+         */
         function reset() {
             if (!chrome.runtime?.id) return;
 
@@ -215,6 +271,12 @@
             updateUI();
         }
 
+        /**
+         * Set the UI collapsed state and persist it.
+         *
+         * Stops any active buzz animation, updates the container's collapsed class and collapse button icon to match the new state, and saves the state to chrome.storage.local.
+         * @param {boolean} collapsed - `true` to collapse the timer UI, `false` to expand it.
+         */
         function setCollapsed(collapsed) {
             // Stop buzzing on any interaction
             stopBuzzing();
