@@ -4,7 +4,7 @@
 
 ![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-In_Review-yellow?style=for-the-badge&logo=googlechrome&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
-![Version](https://img.shields.io/badge/Version-2.0-blue?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-3.0-blue?style=for-the-badge)
 
 A no-nonsense, on-page timer designed for coding interviews, focused work, and anyone who needs to keep track of time without the clutter.
 
@@ -20,74 +20,72 @@ That's why I built Timer. While modern platforms have made their timers more com
 
 ## ✨ Key Features
 
-* **Always Visible & Persistent**: The timer stays on the page even when you switch tabs. It even remembers its state if you close and reopen your browser.
-* **Real-Time Sync**: Start, stop, or reset the timer on one tab, and the state is instantly updated across all your other open tabs.
-* **🎨 Enhanced Design**: Updated with improved typography, better icon sizing, and refined visual styling for a more polished look.
-* **🖱️ Drag & Drop Positioning**: Simply drag the timer anywhere on the page to set a custom position. No more being limited to preset corners!
-* **⚡ Smooth Interactions**: Optimized dragging experience with immediate response and smooth movement.
-* **📱 Responsive Layout**: Better box-sizing and improved time display formatting for consistent appearance.
-* **Minimalist UI**: A clean, simple interface with just the essentials: Start, Stop, and Reset. No distractions.
-* **Collapsible Design**: Click the arrow to collapse the controls into a single, unobtrusive icon.
-* **Fully Configurable**: Use the extension popup to:
-    * Toggle the timer's visibility on and off.
-    * Choose from preset positions (top-left, top-right, bottom-left, or bottom-right).
-    * Or drag the timer anywhere for custom positioning.
+* **Always Visible & Persistent**: The timer stays on the page even when you switch tabs. It remembers its state across browser sessions.
+* **Stopwatch & Timer Modes**: Count up (stopwatch) or count down (timer) based on your needs.
+* **Timer Completion Alert**: Pulsing animation with red glow when countdown reaches zero.
+* **Pause & Resume**: Pause and resume exactly where you left off.
+* **Color Gradient**: Timer display changes color as time runs out (blue → red).
+* **Real-Time Sync**: State syncs instantly across all open tabs.
+* **Drag & Drop**: Position the timer anywhere on the page.
+* **Minimalist UI**: Clean interface with Play/Pause, Reset, and Collapse.
+* **Collapsible**: Minimize to a single icon when not needed.
+* **Button Feedback**: Visual feedback on all button clicks.
 
 ## 🚀 Installation
 
-> **Note:** This extension is currently under review by the Chrome Web Store team. The official installation link will be added here once it's live. For now, you can install it directly from the source.
+> **Note:** This extension is currently under review by the Chrome Web Store team.
 
-#### **Install from Source (for Developers)**
+#### **Install from Source**
 
-1.  **Download:** Download this repository as a `.zip` file from GitHub and unzip it.
-2.  **Navigate:** Open Chrome and go to `chrome://extensions`.
-3.  **Enable Developer Mode:** Turn on the "Developer mode" toggle in the top-right corner.
-4.  **Load the Extension:** Click on the **"Load unpacked"** button and select the unzipped folder containing the project files.
+1. Download this repository as a `.zip` and unzip it
+2. Open Chrome and go to `chrome://extensions`
+3. Enable **Developer mode** (top-right toggle)
+4. Click **Load unpacked** and select the unzipped folder
 
 ## 🛠️ How to Use
 
-* **Controls:** Use the Play, Pause, and Reset icons directly on the webpage to control the timer.
-* **Collapse/Expand:** Click the arrow icon to collapse the timer, and click the timer icon to expand it again.
-* **Drag & Drop:** Simply click and drag the timer anywhere on the page to position it exactly where you want it.
-* **Settings:** Click the Timer icon in your Chrome toolbar (next to the address bar) to open the settings popup. From here, you can show/hide the timer and change its position.
+### Stopwatch Mode (Default)
+- **Play** → Start counting up
+- **Pause** → Stop (time preserved)
+- **Play** → Resume from paused time
+- **Reset** → Back to 00:00:00
 
-## 🆕 What's New in v2.0
+### Timer Mode
+1. Click Timer icon in toolbar → Select **Timer** mode
+2. Set hours/minutes/seconds → Click **Set Timer**
+3. **Play** → Start countdown
+4. Timer buzzes when complete → **Play** to restart or **Reset**
 
-* **🎨 Visual Improvements**: Enhanced design with better typography, improved icon sizing, and refined styling
-* **🖱️ Drag & Drop**: Full drag-and-drop positioning - move the timer anywhere on the page
-* **⚡ Performance**: Optimized JavaScript positioning logic for more reliable behavior
-* **📱 Better Layout**: Improved box-sizing and time display formatting
-* **🔧 Code Quality**: Refactored architecture with centralized assets and cleaner code organization
+### Controls
+- **Collapse**: Click arrow to minimize
+- **Drag**: Click and drag to reposition
+- **Settings**: Click toolbar icon for options
+
+## 🆕 What's New in v3.0
+
+* Timer mode with countdown up to 24 hours
+* Pulsing completion alert with red glow
+* True pause/resume (resumes from exact time)
+* Color gradient as time runs out
+* Button click feedback
+* Page reload sync fix
+* Accessibility improvements
 
 ## 💻 Tech Stack
 
-* **Core:** JavaScript (ES6), HTML5, CSS3
-* **Architecture:** Chrome Extension API (Manifest V3)
-* **APIs:** `chrome.storage` for persistence and sync, `chrome.runtime` for communication
-* **Assets:** Centralized SVG icons and CSS in modular structure
+* JavaScript (ES6), HTML5, CSS3
+* Chrome Extension API (Manifest V3)
+* Shadow DOM for style isolation
 
 ## 🤝 Contributing
 
-Contributions, issues, and feature requests are welcome! Feel free to check the [issues page]([link-to-your-github-issues]).
+Contributions, issues, and feature requests are welcome!
 
 ## 📄 License
 
-This project is licensed under the **MIT License with Commercial Use Restriction**.
+**MIT License with Commercial Use Restriction**
 
-### **Free Use (Personal/Educational)**
-- ✅ Personal use
-- ✅ Educational purposes
-- ✅ Non-commercial projects
-- ✅ Open source contributions
+✅ Personal use, education, non-commercial projects  
+❌ Commercial applications, paid products, business use
 
-### **Commercial Use**
-- ❌ Commercial applications
-- ❌ Paid products/services
-- ❌ Business use
-- ❌ Revenue-generating activities
-
-**For commercial licensing inquiries, please contact: [your-email-here]**
-
----
-
-**Note:** This dual-licensing approach allows free personal use while protecting commercial interests. If you're unsure whether your use case requires a commercial license, please reach out for clarification.
+For commercial licensing: [your-email-here]

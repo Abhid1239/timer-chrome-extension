@@ -266,7 +266,16 @@
                     mode = response.mode || 'stopwatch';
                     currentTimerTarget = response.currentTimerTarget || 0;
 
-                    // If timer mode and no remaining time saved, use target
+                    // Handle timer mode on page reload while running
+                    if (mode === 'timer' && isRunning && startTime > 0) {
+                        // Recalculate remaining based on time elapsed since start
+                        const elapsedSinceStart = Date.now() - startTime;
+                        timerRemaining = Math.max(0, timerRemaining - elapsedSinceStart);
+                        // Reset startTime to now for tick() calculations
+                        startTime = Date.now();
+                    }
+
+                    // If timer mode and not running, ensure we show target
                     if (mode === 'timer' && timerRemaining <= 0 && !isRunning) {
                         timerRemaining = currentTimerTarget;
                     }

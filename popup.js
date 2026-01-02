@@ -42,8 +42,14 @@ document.addEventListener('DOMContentLoaded', () => {
     // Save the current settings to storage
     function saveSettings() {
         const isVisible = visibilityToggle.checked;
-        const position = document.querySelector('input[name="position"]:checked').value;
-        const mode = document.querySelector('input[name="mode"]:checked').value;
+        const positionEl = document.querySelector('input[name="position"]:checked');
+        const modeEl = document.querySelector('input[name="mode"]:checked');
+
+        // Guard against null (shouldn't happen, but defensive)
+        if (!positionEl || !modeEl) return;
+
+        const position = positionEl.value;
+        const mode = modeEl.value;
 
         chrome.storage.local.set({
             isTimerVisible: isVisible,
@@ -58,7 +64,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Handle mode change
     function handleModeChange() {
-        const mode = document.querySelector('input[name="mode"]:checked').value;
+        const modeEl = document.querySelector('input[name="mode"]:checked');
+        if (!modeEl) return;
+        const mode = modeEl.value;
         timerSettings.style.display = mode === 'timer' ? 'block' : 'none';
         saveSettings();
     }
