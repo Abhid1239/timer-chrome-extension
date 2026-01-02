@@ -3,9 +3,19 @@
     const ns = (window.TimerExt = window.TimerExt || {});
 
     /**
-     * UI module: builds the Shadow DOM host, loads styles, creates controls,
-     * and exposes useful references and helpers. All SVGs/CSS are sourced from
-     * `TimerExt.assets` so they can be centrally edited.
+     * Build and attach the timer UI inside an open Shadow DOM and expose its elements and helpers.
+     *
+     * @returns {{host: HTMLDivElement, shadow: ShadowRoot, container: HTMLDivElement, controls: {collapseButton: HTMLButtonElement, playPauseButton: HTMLButtonElement, resetButton: HTMLButtonElement}, elements: {timeDisplay: HTMLDivElement, playIcon: HTMLElement|null, pauseIcon: HTMLDivElement}, svgs: Object, formatTime: function(number):string, formatTimerTime: function(number):string, formatStopwatchTime: function(number):string, setRunningIcons: function(boolean):void}} An object containing:
+     * - host: the host div attached to document for the shadow root.
+     * - shadow: the open ShadowRoot where UI is rendered.
+     * - container: the root container element inside the shadow root.
+     * - controls: button elements for collapse, play/pause, and reset.
+     * - elements: UI elements including the time display and icon wrappers.
+     * - svgs: SVG asset map sourced from TimerExt.assets.
+     * - formatTime(ms): formats milliseconds as "HH:MM:SS".
+     * - formatTimerTime(ms): formats milliseconds for countdown timer display.
+     * - formatStopwatchTime(ms): formats milliseconds for stopwatch (elapsed) display.
+     * - setRunningIcons(isRunning): swap play/pause icon visibility based on running state.
      */
     function initUI() {
         // Host that contains the shadow root so we can position it on the page
@@ -91,7 +101,11 @@
 
         shadow.appendChild(container);
 
-        // Helpers for time display and icon swap
+        /**
+         * Format a duration (milliseconds) as an HH:MM:SS time string.
+         * @param {number} ms - Duration in milliseconds.
+         * @returns {string} The formatted time as `HH:MM:SS` with each unit zero-padded to two digits; negative `ms` values are treated as zero.
+         */
         function formatTime(ms) {
             if (ms < 0) ms = 0;
             let totalSeconds = Math.floor(ms / 1000);
@@ -101,16 +115,28 @@
             return `${hours}:${minutes}:${seconds}`;
         }
 
-        // Format time for timer mode (shows countdown)
+        /**
+         * Format a millisecond duration for timer (countdown) display.
+         * @param {number} ms - Duration in milliseconds; values less than 0 are treated as 0.
+         * @returns {string} The duration formatted as `HH:MM:SS`.
+         */
         function formatTimerTime(ms) {
             return formatTime(ms);
         }
 
-        // Format time for stopwatch mode (shows elapsed)
+        /**
+         * Format an elapsed time value (stopwatch) into an `HH:MM:SS` string.
+         * @param {number} ms - Elapsed time in milliseconds.
+         * @returns {string} A string in `HH:MM:SS` representing the elapsed time; negative inputs produce `00:00:00`.
+         */
         function formatStopwatchTime(ms) {
             return formatTime(ms);
         }
 
+        /**
+         * Update the visible icon to reflect whether the timer is running.
+         * @param {boolean} isRunning - `true` to show the pause icon and hide the play icon; `false` to show the play icon and hide the pause icon.
+         */
         function setRunningIcons(isRunning) {
             if (isRunning) {
                 playIcon.classList.add('hidden');
@@ -137,5 +163,4 @@
 
     ns.ui = { initUI };
 })();
-
 

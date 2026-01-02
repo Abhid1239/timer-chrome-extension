@@ -16,6 +16,10 @@
         currentTimerTarget: 0 // total ms for countdown
     };
 
+    /**
+     * Load settings from chrome.storage.local using the defaults as fallbacks and pass the resulting settings to the callback.
+     * @param {function(Object):void} callback - Called with the retrieved settings object (defaults merged with stored values).
+     */
     function loadSettings(callback) {
         chrome.storage.local.get(defaults, (settings) => callback(settings));
     }
@@ -36,5 +40,4 @@
 
     ns.settings = { defaults, loadSettings, onSettingsChange };
 })();
-
 
