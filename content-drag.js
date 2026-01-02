@@ -38,14 +38,16 @@
             document.body && (document.body.style.userSelect = '');
             container.classList.remove('dragging');
 
-            // Save the final position
-            const rect = container.getBoundingClientRect();
-            const left = Math.round(rect.left);
-            const top = Math.round(rect.top);
-            chrome.storage.local.set({
-                timerPositionMode: 'custom',
-                timerCustomPosition: { left, top }
-            });
+            // Save the final position (with guard for extension context)
+            if (chrome.runtime?.id) {
+                const rect = container.getBoundingClientRect();
+                const left = Math.round(rect.left);
+                const top = Math.round(rect.top);
+                chrome.storage.local.set({
+                    timerPositionMode: 'custom',
+                    timerCustomPosition: { left, top }
+                });
+            }
 
             e.preventDefault();
         }

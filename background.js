@@ -3,21 +3,19 @@ function broadcastStateChange(data) {
   chrome.tabs.query({}, (tabs) => {
     for (let tab of tabs) {
       chrome.tabs.sendMessage(tab.id, { command: "stateChanged", data })
-        .then(() => {
-          // console.log('[TimerExt/bg] broadcasted state change to tab', tab.id, data);
-        })
-        .catch(err => { /* console.log('[TimerExt/bg] Could not contact tab', tab.id, err?.message); */ });
+        .then(() => { })
+        .catch(() => { });
     }
   });
 }
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  // console.log('[TimerExt/bg] onMessage', request.command, request.data);
   switch (request.command) {
     case "start":
       chrome.storage.local.set({
         startTime: request.data.startTime,
         elapsedTime: request.data.elapsedTime,
+        timerRemaining: request.data.timerRemaining,
         isRunning: true,
         mode: request.data.mode,
         currentTimerTarget: request.data.currentTimerTarget
@@ -25,6 +23,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         isRunning: true,
         startTime: request.data.startTime,
         elapsedTime: request.data.elapsedTime,
+        timerRemaining: request.data.timerRemaining,
         mode: request.data.mode,
         currentTimerTarget: request.data.currentTimerTarget
       }));
@@ -32,12 +31,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     case "stop":
       chrome.storage.local.set({
         elapsedTime: request.data.elapsedTime,
+        timerRemaining: request.data.timerRemaining,
         isRunning: false,
         mode: request.data.mode,
         currentTimerTarget: request.data.currentTimerTarget
       }, () => broadcastStateChange({
         isRunning: false,
         elapsedTime: request.data.elapsedTime,
+        timerRemaining: request.data.timerRemaining,
         mode: request.data.mode,
         currentTimerTarget: request.data.currentTimerTarget
       }));
@@ -45,6 +46,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     case "reset":
       chrome.storage.local.set({
         elapsedTime: 0,
+        timerRemaining: request.data.timerRemaining || request.data.currentTimerTarget,
         isRunning: false,
         startTime: 0,
         mode: request.data.mode,
@@ -52,24 +54,27 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       }, () => broadcastStateChange({
         isRunning: false,
         elapsedTime: 0,
+        timerRemaining: request.data.timerRemaining || request.data.currentTimerTarget,
         mode: request.data.mode,
         currentTimerTarget: request.data.currentTimerTarget
       }));
       break;
     case "getStatus":
-      chrome.storage.local.get(["startTime", "elapsedTime", "isRunning", "mode", "currentTimerTarget"], (result) => {
-        // console.log('[TimerExt/bg] getStatus ->', result);
+      chrome.storage.local.get([
+        "startTime", "elapsedTime", "timerRemaining", "isRunning",
+        "mode", "currentTimerTarget"
+      ], (result) => {
         sendResponse(result);
       });
-      return true; // Return true because this is asynchronous
+      return true;
   }
 });
 
 // Initialize state on first install or update
-// IMPORTANT: Only set defaults for keys that don't exist to preserve user data on updates
 chrome.runtime.onInstalled.addListener((details) => {
   const defaults = {
     elapsedTime: 0,
+    timerRemaining: 0,
     isRunning: false,
     startTime: 0,
     isTimerCollapsed: false,
@@ -85,10 +90,8 @@ chrome.runtime.onInstalled.addListener((details) => {
   };
 
   if (details.reason === 'install') {
-    // Fresh install: set all defaults
     chrome.storage.local.set(defaults);
   } else if (details.reason === 'update') {
-    // Update: only fill in missing keys to preserve existing user data
     chrome.storage.local.get(Object.keys(defaults), (existing) => {
       const toSet = {};
       for (const key of Object.keys(defaults)) {
@@ -96,7 +99,6 @@ chrome.runtime.onInstalled.addListener((details) => {
           toSet[key] = defaults[key];
         }
       }
-      // Only write if there are new keys to add
       if (Object.keys(toSet).length > 0) {
         chrome.storage.local.set(toSet);
       }
