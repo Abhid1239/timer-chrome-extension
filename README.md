@@ -4,7 +4,7 @@
 
 ![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-In_Review-yellow?style=for-the-badge&logo=googlechrome&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
-![Version](https://img.shields.io/badge/Version-3.0-blue?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-3.1-blue?style=for-the-badge)
 
 A no-nonsense, persistent stopwatch & timer designed for developers, students, and anyone who needs to stay focused without the clutter.
 
@@ -77,7 +77,13 @@ That's why I built Timer—a no-nonsense, persistent stopwatch designed for deve
 - **Drag**: Click and drag to reposition
 - **Settings**: Click toolbar icon for options
 
-## 🆕 What's New in v3.0
+## 🆕 What's New in v3.1
+
+* **First-Run Guidance**: Friendly "refresh this tab" message appears when timer isn't loaded yet
+* Minimal permissions—only `storage` required (no scary permission prompts)
+* Improved error handling for extension context invalidation
+
+## 📦 What's New in v3.0
 
 * Timer mode with countdown up to 24 hours
 * Pulsing completion alert with red glow

@@ -7,6 +7,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const timerMinutes = document.getElementById('timer-minutes');
     const timerSeconds = document.getElementById('timer-seconds');
     const setTimerBtn = document.getElementById('set-timer-btn');
+    const refreshMessage = document.getElementById('refresh-message');
+
+    // Check if content script is loaded in the active tab
+    async function checkContentScriptLoaded() {
+        try {
+            const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+            if (!tab?.id) return false;
+
+            // Try to ping the content script
+            const response = await chrome.tabs.sendMessage(tab.id, { command: 'ping' })
+                .catch(() => null);
+
+            return response?.pong === true;
+        } catch {
+            return false;
+        }
+    }
+
+    // Show or hide the refresh message based on content script status
+    async function updateRefreshMessage() {
+        const isVisible = visibilityToggle.checked;
+        if (!isVisible) {
+            refreshMessage.style.display = 'none';
+            return;
+        }
+
+        const isLoaded = await checkContentScriptLoaded();
+        refreshMessage.style.display = isLoaded ? 'none' : 'flex';
+    }
 
     // Load saved settings and apply them to the popup's controls
     function loadSettings() {
@@ -36,6 +65,9 @@ document.addEventListener('DOMContentLoaded', () => {
             timerHours.value = items.timerHours || 0;
             timerMinutes.value = items.timerMinutes || 0;
             timerSeconds.value = items.timerSeconds || 0;
+
+            // Check if we need to show refresh message
+            updateRefreshMessage();
         });
     }
 
@@ -60,6 +92,9 @@ document.addEventListener('DOMContentLoaded', () => {
             timerMinutes: Math.max(0, Math.min(59, parseInt(timerMinutes.value, 10) || 0)),
             timerSeconds: Math.max(0, Math.min(59, parseInt(timerSeconds.value, 10) || 0))
         });
+
+        // Update refresh message visibility
+        updateRefreshMessage();
     }
 
     // Handle mode change
