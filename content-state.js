@@ -246,7 +246,11 @@
             const iconWrapper = ui.controls.collapseButton.querySelector('.icon-wrapper');
             iconWrapper.innerHTML = isCollapsed ? ui.svgs.timer : ui.svgs.back;
             if (chrome.runtime?.id) {
-                chrome.storage.local.set({ isTimerCollapsed: isCollapsed });
+                try {
+                    chrome.storage.local.set({ isTimerCollapsed: isCollapsed });
+                } catch (e) {
+                    // Extension context invalidated - ignore silently
+                }
             }
         }
 

@@ -40,13 +40,17 @@
 
             // Save the final position (with guard for extension context)
             if (chrome.runtime?.id) {
-                const rect = container.getBoundingClientRect();
-                const left = Math.round(rect.left);
-                const top = Math.round(rect.top);
-                chrome.storage.local.set({
-                    timerPositionMode: 'custom',
-                    timerCustomPosition: { left, top }
-                });
+                try {
+                    const rect = container.getBoundingClientRect();
+                    const left = Math.round(rect.left);
+                    const top = Math.round(rect.top);
+                    chrome.storage.local.set({
+                        timerPositionMode: 'custom',
+                        timerCustomPosition: { left, top }
+                    });
+                } catch (e) {
+                    // Extension context invalidated - ignore silently
+                }
             }
 
             e.preventDefault();

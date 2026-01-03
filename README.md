@@ -6,7 +6,7 @@
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
 ![Version](https://img.shields.io/badge/Version-3.0-blue?style=for-the-badge)
 
-A no-nonsense, on-page timer designed for coding interviews, focused work, and anyone who needs to keep track of time without the clutter.
+A no-nonsense, persistent stopwatch & timer designed for developers, students, and anyone who needs to stay focused without the clutter.
 
 [Timer Demo](https://www.youtube.com/watch?v=bpWk9TZDaTo)
 
@@ -14,22 +14,38 @@ A no-nonsense, on-page timer designed for coding interviews, focused work, and a
 
 ## The "Why" Behind This Project
 
-Ever hidden your taskbar for a coding interview on LeetCode and completely lost track of time? I have.
+Ever hidden your taskbar for an interview and completely lost track of time? I have.
 
-That's why I built Timer. While modern platforms have made their timers more complex, and other extensions disappear when you switch tabs, this tool brings back simple, persistent functionality. It's inspired by the clean, minimalist design of classic coding platform timers—it just works.
+That's why I built Timer—a no-nonsense, persistent stopwatch designed for developers, students, and anyone who needs to stay focused without the clutter. While modern platforms have made their timers more complex, this tool brings back the simple, minimalist design that just works.
 
-## ✨ Key Features
+### Why is this the timer you've been looking for?
 
-* **Always Visible & Persistent**: The timer stays on the page even when you switch tabs. It remembers its state across browser sessions.
-* **Stopwatch & Timer Modes**: Count up (stopwatch) or count down (timer) based on your needs.
+**Always Visible, Never Intrusive**: Unlike other extensions that live in a popup, Timer stays on the page. Switch tabs, navigate to a new problem—it stays with you. No extra clicks needed to see your time.
+
+**Dual Stopwatch & Timer Modes**: Count up with the stopwatch for open-ended work, or set a countdown timer (up to 24 hours) for time-boxed sessions. The timer alerts you with a pulsing red glow when time's up.
+
+**Smart Visual Feedback**: As your countdown timer runs out, watch the display shift from calm blue to urgent red—a subtle gradient that keeps you aware without being distracting.
+
+**Inspired by Classic Minimalism**: If you miss the simple, clean design of older coding platform timers, you're in the right place. We built on that beloved design, giving you just the controls you need: start, pause, resume, and reset. No complexity, no distractions.
+
+**Perfect for Interviews & Deep Work**: This tool was born from the pressure of technical interviews. It's the perfect companion for keeping pace on platforms like LeetCode, HackerRank, or any focused work session.
+
+## ✨ Core Features
+
+* **Total Placement Freedom**: Position the timer exactly where you want it with smooth drag-and-drop. For quick placement, you can also snap it to any corner of the screen via the settings popup.
+* **Always-On & In Sync**: The timer stays on the page even when you switch tabs. It runs persistently and syncs its state (running, paused, time) across all your open tabs and windows.
+* **Minimalist & Distraction-Free**: A clean, simple interface with one-click Start, Stop, and Reset. No complex menus, no clutter—just pure focus.
+* **Collapsible UI**: Need more screen space? Collapse the timer into a single, unobtrusive icon with a smooth animation.
+* **Lightweight & Fast**: Built with performance in mind to ensure it never gets in your way.
+
+### Additional Features
+
+* **Stopwatch & Timer Modes**: Count up (stopwatch) or set a countdown timer (up to 24 hours).
 * **Timer Completion Alert**: Pulsing animation with red glow when countdown reaches zero.
-* **Pause & Resume**: Pause and resume exactly where you left off.
-* **Color Gradient**: Timer display changes color as time runs out (blue → red).
-* **Real-Time Sync**: State syncs instantly across all open tabs.
-* **Drag & Drop**: Position the timer anywhere on the page.
-* **Minimalist UI**: Clean interface with Play/Pause, Reset, and Collapse.
-* **Collapsible**: Minimize to a single icon when not needed.
-* **Button Feedback**: Visual feedback on all button clicks.
+* **True Pause & Resume**: Pause and resume exactly where you left off—no time lost.
+* **Color Gradient Warning**: Timer display shifts from blue → red as time runs out.
+* **Real-Time Sync**: State syncs instantly across all open tabs and browser sessions.
+* **Button Feedback**: Visual click feedback for a responsive feel.
 
 ## 🚀 Installation
 
