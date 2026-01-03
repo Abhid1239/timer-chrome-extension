@@ -101,6 +101,16 @@
             return `${hours}:${minutes}:${seconds}`;
         }
 
+        // Format time for timer mode (shows countdown)
+        function formatTimerTime(ms) {
+            return formatTime(ms);
+        }
+
+        // Format time for stopwatch mode (shows elapsed)
+        function formatStopwatchTime(ms) {
+            return formatTime(ms);
+        }
+
         function setRunningIcons(isRunning) {
             if (isRunning) {
                 playIcon.classList.add('hidden');
@@ -119,6 +129,8 @@
             elements: { timeDisplay, playIcon, pauseIcon },
             svgs,
             formatTime,
+            formatTimerTime,
+            formatStopwatchTime,
             setRunningIcons
         };
     }

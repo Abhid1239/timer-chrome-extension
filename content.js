@@ -8,6 +8,14 @@
 (function () {
   const ns = (window.TimerExt = window.TimerExt || {});
 
+  // Respond to ping from background script to check if content script is loaded
+  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.command === 'ping') {
+      sendResponse({ pong: true });
+      return true;
+    }
+  });
+
   // Build UI and mount host when body is ready
   const ui = ns.ui.initUI();
   if (!document.body) {
