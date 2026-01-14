@@ -1,12 +1,9 @@
 # Timer - A Minimalist, Persistent Chrome Extension
 
-<!-- ![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-Available-green?style=for-the-badge&logo=googlechrome&logoColor=white) -->
-
-![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-In_Review-yellow?style=for-the-badge&logo=googlechrome&logoColor=white)
+![Chrome Web Store](https://img.shields.io/badge/Chrome_Web_Store-Published-green?style=for-the-badge&logo=googlechrome&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
-![Version](https://img.shields.io/badge/Version-2.0-blue?style=for-the-badge)
+![Version](https://img.shields.io/badge/Version-3.0-blue?style=for-the-badge)
 
-A no-nonsense, on-page timer designed for coding interviews, focused work, and anyone who needs to keep track of time without the clutter.
 
 [Timer Demo](https://www.youtube.com/watch?v=bpWk9TZDaTo)
 
